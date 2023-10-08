@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 
 export async function signUp(req, res) {
-    const { email, password, name, phone, city, type } = req.body;
+    const { email, password, confirmPassword, name, phone, city, type } = req.body;
 
     const checkEmail = await db.query(`SELECT * FROM users WHERE "email" = $1;`, [email]);
     if (checkEmail.rowCount > 0) return res.status(409).send("Email já cadastrado");
@@ -14,10 +14,10 @@ export async function signUp(req, res) {
     try{
 
         await db.query(`INSERT INTO users (email, password, name, phone, city, type) VALUES ($1, $2, $3, $4, $5, $6);`,
-        [email, password, name, phone, city, type]);
+        [email, passwordCrypt, name, phone, city, type]);
 
 
-        return res.sendStatus(201);
+        return res.status(201).send("Usuário cadastrado com sucesso");
 
     }catch(err){
         return res.status(500).send(err.message);
@@ -32,7 +32,7 @@ export async function signIn(req, res) {
     if (checkUser.rowCount <= 0) return res.status(401).send("Email não cadastrado");
 
     const passwordCheck = bcrypt.compareSync(password, checkUser.rows[0].password);
-    if (!passwordCheck) return res.sendStatus(401);
+    if (!passwordCheck) return res.status(401).send("Senha incorreta");
 
     const token = uuid();
     const data = {
