@@ -1,10 +1,9 @@
 import { Router } from "express"
 import servicesRouter from "./services.routes.js"
-import usersRouter from "./users.routes.js"
+import signRouter from "./sign.routes.js"
 
 const router = Router()
 
-router.use(servicesRouter)
-router.use(usersRouter)
+router.use(signRouter)
 
 export default router
