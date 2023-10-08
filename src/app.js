@@ -1,12 +1,12 @@
-import { Router } from "express"
-import recipeRouter from "./sign.routes.js"
-import urlsRouter from "./urls.routes.js"
-import usersRouter from "./users.routes.js"
+import express from "express"
+import cors from "cors"
+import router from "./routes/index.routes.js"
 
-const router = Router()
+const app = express()
 
-router.use(recipeRouter)
-router.use(urlsRouter)
-router.use(usersRouter)
+app.use(cors())
+app.use(express.json())
+app.use(router)
 
-export default router
+const PORT = process.env.PORT || 5000
+app.listen(PORT, () => console.log(`Servidor está rodando na porta ${PORT}`))
