@@ -1,11 +1,12 @@
 import db from '../database/database.connection.js';
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
+import { getUsersByEmail, insertSigns, insertUsers } from '../repository/sign.repository.js';
 
 export async function signUp(req, res) {
     const { email, password, confirmPassword, name, phone, city, type } = req.body;
 
-    const checkEmail = await db.query(`SELECT * FROM users WHERE "email" = $1;`, [email]);
+    const checkEmail = await getUsersByEmail(email);
     if (checkEmail.rowCount > 0) return res.status(409).send("Email já cadastrado");
     if (password !== confirmPassword) return res.status(422).send("Senhas e confirmação não conferem");
 
@@ -13,10 +14,7 @@ export async function signUp(req, res) {
 
     try{
 
-        await db.query(`INSERT INTO users (email, password, name, phone, city, type) VALUES ($1, $2, $3, $4, $5, $6);`,
-        [email, passwordCrypt, name, phone, city, type]);
-
-
+        await insertUsers(email, passwordCrypt, name, phone, city, type);
         return res.status(201).send("Usuário cadastrado com sucesso");
 
     }catch(err){
@@ -28,7 +26,7 @@ export async function signUp(req, res) {
 export async function signIn(req, res) {
     const { email, password } = req.body;
 
-    const checkUser = await db.query(`SELECT * FROM users WHERE email = $1;`, [email]);
+    const checkUser = await getUsersByEmail(email);
     if (checkUser.rowCount <= 0) return res.status(401).send("Email não cadastrado");
 
     const passwordCheck = bcrypt.compareSync(password, checkUser.rows[0].password);
@@ -44,8 +42,7 @@ export async function signIn(req, res) {
 
     try{
 
-        await db.query(`INSERT INTO signs (userid, token, state) VALUES ($1, $2, $3);`,
-        [userId, token, state]);
+        await insertSigns(userId, token, state);
      
        
         return res.status(200).send(data);
