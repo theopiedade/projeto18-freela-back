@@ -1,9 +1,10 @@
 import Joi from "joi";
 
 
-export const schemaServices = Joi.object({
+export const servicesSchema = Joi.object({
 	photo: Joi.string().required(),
 	description: Joi.string().required(),
-    price: Joi.integer().required(),
-    activeState: Joi.boolean().required()
+    price: Joi.number().integer().required(),
+    active_state: Joi.boolean().required(),
+    userid: Joi.number().integer().required()
 })

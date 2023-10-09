@@ -13,3 +13,7 @@ export async function insertSigns (userId, token, state) {
 	return db.query('INSERT INTO signs (userid, token, state) VALUES ($1, $2, $3);', 
     [userId, token, state]);
 }
+
+export async function checkToken (token, id) {
+    return db.query(`SELECT * FROM signs WHERE token = $1 AND userid = $2;`, [token, id]);
+}

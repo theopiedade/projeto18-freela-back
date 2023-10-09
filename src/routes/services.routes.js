@@ -1,11 +1,13 @@
 import { Router } from "express"
-import { getServices } from "../controllers/services.controllers.js"
-import { signUpSchema, signInSchema } from "../schemas/sign.schemas.js"
+import { getServices, getMyServices, createServices  } from "../controllers/services.controllers.js"
+import { servicesSchema } from "../schemas/services.schema.js"
 import { validateSchema } from "../middlewares/validateschema.js"
+
 
 const serviceRouter = Router()
 
-serviceRouter.post("/getservices", getServices);
-serviceRouter.post("/getmyservices", validateSchema(signInSchema), getMyServices);
+serviceRouter.get("/getservices", getServices);
+serviceRouter.get("/getmyservices/:id", getMyServices);
+serviceRouter.post("/createservices/:id", validateSchema(servicesSchema), createServices);
 
-export default signRouter
+export default serviceRouter
